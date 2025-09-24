@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import ProfileForm from '@/components/ProfileForm';
 
 export default async function ProfilePage() {
-  const supabase = await createClient(); // FIX: Added 'await' here
+  const supabase = createClient(); // FIX: Removed 'await' here
 
   const {
     data: { session },

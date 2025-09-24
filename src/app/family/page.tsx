@@ -1,8 +1,8 @@
-import { createClient } from '@/lib/supabase/server'; // <-- Updated import
+import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export default async function FamilyPage() {
-  const supabase = await createClient(); // <-- Updated client creation
+  const supabase = createClient(); // FIX: Removed 'await' here
 
   const {
     data: { session },
@@ -36,7 +36,6 @@ export default async function FamilyPage() {
           + Add Child
         </button>
       </div>
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <ul role="list" className="divide-y divide-gray-200">
           {familyMembers?.map((member) => (
