@@ -1,11 +1,10 @@
-'use client'; // This page now needs state, so it must be a client component
+'use client';
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation'; // FIX: Import useRouter
 import AddChildModal from '@/components/AddChildModal';
 
-// Define a type for our family members for TypeScript
 type FamilyMember = {
   id: string;
   full_name: string | null;
@@ -14,16 +13,16 @@ type FamilyMember = {
 
 export default function FamilyPage() {
   const supabase = createClient();
+  const router = useRouter(); // FIX: Initialize the router
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkUserAndFetchFamily = async () => {
-      // First, check the current user's role
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        redirect('/');
+        router.push('/'); // FIX: Use router.push for navigation
         return;
       }
       
@@ -34,11 +33,10 @@ export default function FamilyPage() {
         .single();
 
       if (!profile?.is_parent) {
-        redirect('/');
+        router.push('/'); // FIX: Use router.push for navigation
         return;
       }
 
-      // If they are a parent, fetch the family members
       const { data: familyData } = await supabase
         .from('profiles')
         .select('*')
@@ -51,7 +49,7 @@ export default function FamilyPage() {
     };
 
     checkUserAndFetchFamily();
-  }, [supabase]); // Re-run effect if supabase client changes
+  }, [supabase, router]); // Add router to the dependency array
 
   if (isLoading) {
     return <div>Loading family data...</div>
