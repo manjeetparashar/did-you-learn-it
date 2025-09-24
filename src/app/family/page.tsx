@@ -5,12 +5,12 @@ import { createClient } from '@/lib/supabase/client';
 
 export default function FamilyPage() {
   const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [debugData, setDebugData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkUserRole = async () => {
-      // Step A: Get the currently logged-in user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (!user) {
         setDebugData({ error: 'User not found.', userError });
@@ -18,14 +18,12 @@ export default function FamilyPage() {
         return;
       }
 
-      // Step B: Try to fetch this user's profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('*') // Select everything for debugging
+        .select('*')
         .eq('id', user.id)
         .single();
       
-      // Step C: Display whatever we found
       setDebugData({
         user: user,
         profile: profile,
