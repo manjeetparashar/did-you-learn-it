@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabase/client'; // <-- Updated import
 import { useRouter } from 'next/navigation';
 
-// Define a type for the profile data for better TypeScript support
 type Profile = {
   id: string;
   full_name: string | null;
@@ -13,6 +12,7 @@ type Profile = {
 };
 
 export default function ProfileForm({ profile }: { profile: Profile }) {
+  const supabase = createClient(); // <-- Updated client creation
   const router = useRouter();
   const [fullName, setFullName] = useState(profile.full_name || '');
   const [aboutMe, setAboutMe] = useState(profile.about_me || '');
@@ -29,7 +29,7 @@ export default function ProfileForm({ profile }: { profile: Profile }) {
       .update({
         full_name: fullName,
         about_me: aboutMe,
-        updated_at: new Date().toISOString(), // Update the timestamp
+        updated_at: new Date().toISOString(),
       })
       .eq('id', profile.id);
 
@@ -37,7 +37,6 @@ export default function ProfileForm({ profile }: { profile: Profile }) {
       setMessage('Error updating profile: ' + error.message);
     } else {
       setMessage('Profile updated successfully!');
-      // Refresh the page to show any new data
       router.refresh();
     }
     
@@ -45,6 +44,7 @@ export default function ProfileForm({ profile }: { profile: Profile }) {
   };
 
   return (
+    // ... The JSX for the form remains exactly the same
     <div>
       <h1 className="text-2xl font-bold text-gray-800">Edit Your Profile</h1>
       <form onSubmit={handleUpdateProfile} className="mt-6 space-y-4">
