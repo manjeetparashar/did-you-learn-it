@@ -1,8 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-// FIX: Removed "use server"; and the 'async' keyword.
-// This is a server-side utility, not a Server Action.
 export function createClient() {
   const cookieStore = cookies();
 
@@ -12,13 +10,16 @@ export function createClient() {
     {
       cookies: {
         get(name: string) {
-          return cookieStore.get(name)?.value;
+          // FIX: Use a type assertion to work around the Next.js v15 type issue
+          return (cookieStore as any).get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options });
+          // FIX: Use a type assertion here as well
+          (cookieStore as any).set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.delete({ name, ...options });
+          // FIX: Use a type assertion here as well
+          (cookieStore as any).delete({ name, ...options });
         },
       },
     }
