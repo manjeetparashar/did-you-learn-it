@@ -1,40 +1,34 @@
-// src/app/family/page.tsx
-
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server'; // <-- Updated import
 import { redirect } from 'next/navigation';
 
 export default async function FamilyPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createClient(); // <-- Updated client creation
 
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // If no one is logged in, redirect to the home/login page
   if (!session) {
     redirect('/');
   }
 
-  // Fetch the current user's profile to check if they are a parent
   const { data: profile } = await supabase
     .from('profiles')
     .select('is_parent')
     .eq('id', session.user.id)
     .single();
 
-  // If the user is not a parent, redirect them away from this page
   if (!profile?.is_parent) {
-    redirect('/'); // Or to a dedicated 'access-denied' page
+    redirect('/');
   }
 
-  // If the user IS a parent, fetch all profiles in the family to display
   const { data: familyMembers } = await supabase
     .from('profiles')
     .select('*')
     .order('created_at', { ascending: true });
     
   return (
+    // ... The JSX for the page remains exactly the same
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Family Members</h1>
