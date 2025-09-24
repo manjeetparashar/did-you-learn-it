@@ -10,15 +10,18 @@ export function createClient() {
     {
       cookies: {
         get(name: string) {
-          // FIX: Use a type assertion to work around the Next.js v15 type issue
+          // FIX: Disable the ESLint rule for this specific line
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return (cookieStore as any).get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          // FIX: Use a type assertion here as well
+          // FIX: Disable the ESLint rule for this specific line
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (cookieStore as any).set({ name, value, ...options });
         },
         remove(name: string, options: CookieOptions) {
-          // FIX: Use a type assertion here as well
+          // FIX: Disable the ESLint rule for this specific line
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (cookieStore as any).delete({ name, ...options });
         },
       },
